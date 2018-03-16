@@ -32,7 +32,7 @@ class NhanhModel extends CI_Model {
     
         if(! curl_error($curl)) {
             // success
-            $response = json_decode($curlResult);
+            $response = json_decode($curlResult, true);
         } else {
             // failed, cannot connect nhanh.vn
             $response = new stdClass();
@@ -41,9 +41,11 @@ class NhanhModel extends CI_Model {
         }
         curl_close($curl);
     
-        if ($response->code == 1) {
+        if ($response['code'] == 1) {
             //$data = $response->data;
-            return $response->data->$dataString->inventory->remain;
+            //var_dump(reset($response['data'])['inventory']['remain']);
+            //return $response->data->$dataString->inventory->remain; //doesn't work on Codeigniter 3.x
+            return reset($response['data'])['inventory']['remain']; //Work on Codeigniter 3.x
         } else {
             // failed, show error messages
             return -1;

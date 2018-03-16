@@ -55,3 +55,5 @@ $route['translate_uri_dashes'] = FALSE;
 
 $route['api/v1/shopee/querystock/(:num)'] = 'api/shopee/querystock/$1';
 $route['api/v1/shopee/putproductstring'] = 'api/shopee/putproductstring/';
+
+$route['test'] = 'test';

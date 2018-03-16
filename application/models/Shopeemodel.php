@@ -22,5 +22,11 @@ class ShopeeModel extends CI_Model {
         }
         return -1;
     }
+    
+    function map_nhanh_id_mysql($shopee_id)
+    {
+        $query = $this->db->query('SELECT nhanh_id FROM id_map WHERE shopee_id = ' . $shopee_id);
+        return $query -> row() -> nhanh_id;
+    }
 }
 ?>
