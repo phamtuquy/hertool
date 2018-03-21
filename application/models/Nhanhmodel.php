@@ -42,13 +42,11 @@ class NhanhModel extends CI_Model {
         curl_close($curl);
     
         if ($response['code'] == 1) {
-            //$data = $response->data;
-            //var_dump(reset($response['data'])['inventory']['remain']);
             //return $response->data->$dataString->inventory->remain; //doesn't work on Codeigniter 3.x
             return reset($response['data'])['inventory']['remain']; //Work on Codeigniter 3.x
         } else {
             // failed, show error messages
-            return -1;
+            return -30;
             if(isset($response->messages) && is_array($response->messages)) {
                 foreach($response->messages as $message) {
                     echo $message;

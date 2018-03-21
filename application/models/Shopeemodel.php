@@ -23,10 +23,21 @@ class ShopeeModel extends CI_Model {
         return -1;
     }
     
-    function map_nhanh_id_mysql($shopee_id)
+    function map_nhanh_id_mysql($shopee_id, $sku)
     {
-        $query = $this->db->query('SELECT nhanh_id FROM id_map WHERE shopee_id = ' . $shopee_id);
-        return $query -> row() -> nhanh_id;
+        if ($sku == 'H0')
+        {
+            $sql = 'SELECT nhanh_id FROM id_map WHERE shopee_id = ? ';
+            $query = $this->db->query($sql, array( $shopee_id) );
+        }
+        else{
+            $sql = 'SELECT nhanh_id FROM id_map WHERE shopee_id = ? AND sku = ?';
+            $query = $this->db->query($sql, array( $shopee_id, $sku) );
+        }
+        if ($query -> num_rows() > 0)
+            return $query -> row() -> nhanh_id;
+        else
+            return 0;
     }
 }
 ?>
