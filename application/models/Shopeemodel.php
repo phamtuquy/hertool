@@ -39,5 +39,16 @@ class ShopeeModel extends CI_Model {
         else
             return 0;
     }
+    
+    function check_order_pushed($shopee_order_id)
+    {
+        $sql = 'SELECT nhanh_order_id FROM shopee_nhanh_order WHERE shopee_order_id = ? ';
+        $query = $this->db->query($sql, array( $shopee_order_id) );
+        
+        if ($query -> num_rows() > 0)
+            return $query -> row() -> nhanh_order_id;
+        else
+            return 0;
+    }
 }
 ?>

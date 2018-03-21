@@ -30,6 +30,21 @@ class Shopee extends CI_Controller {
         json_output(200, $data);
 	}
 	
+	public function checkpushed($order_id)
+	{
+	    $this->load->model('shopeemodel');
+	    
+	    $is_pushed = $this->shopeemodel->check_order_pushed($order_id);
+	    
+	    $data = array(
+            (object)array(
+                'ispushed' => $is_pushed,
+            ),
+        );
+        
+        json_output(200, $data);
+	}
+	
 	public function putproductstring()
 	{
 	    $txt = $this -> input -> post('dataString') . "\n";
@@ -40,7 +55,7 @@ class Shopee extends CI_Controller {
         fclose($myfile);
 	}
 	
-	public function storesyncorder($shopee_order_id, $nhanh_order_id)
+	public function storepushedorder($shopee_order_id, $nhanh_order_id)
 	{
 	    
 	}

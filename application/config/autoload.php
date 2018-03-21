@@ -89,7 +89,7 @@ $autoload['drivers'] = array();
 |
 |	$autoload['helper'] = array('url', 'file');
 */
-$autoload['helper'] = array('url', 'json_output');
+$autoload['helper'] = array('url', 'json_output', 'nhanh_api');
 
 /*
 | -------------------------------------------------------------------

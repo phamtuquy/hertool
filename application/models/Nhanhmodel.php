@@ -8,6 +8,10 @@ class NhanhModel extends CI_Model {
         parent::__construct();
     }
     
+    private static $api_username = "HerSkincare";
+    private static $api_secret = "Vw46erydhs_Cw6e7r6uhdsgas_43w5yr";
+    private static $api_domain_url = "https://dev.nhanh.vn";
+    
     function query_stock($product_id)
     {
         $apiUsername = "HerSkincare";
@@ -54,5 +58,58 @@ class NhanhModel extends CI_Model {
             }
         }
     }
+    
+    function get_order_history($order_id)
+    {
+        $data_string = "" . $order_id;
+        $response = call_nhanh_api(
+            "https://dev.nhanh.vn/api/order/history",
+            "HerSkincare",
+            "Vw46erydhs_Cw6e7r6uhdsgas_43w5yr",
+            $data_string
+        );
+        
+        return $response;
+    }
+    
+    function get_order($mobile, $city, $district)
+    {
+        $data_string = array(
+            customerMobile => $mobile
+        );
+        $response = call_nhanh_api(
+            "https://dev.nhanh.vn/api/order/history",
+            "HerSkincare",
+            "Vw46erydhs_Cw6e7r6uhdsgas_43w5yr",
+            $data_string
+        );
+        
+        return $response;
+    }
+    
+    function push_order_to_nhanh($order_data)
+    {
+        $response = call_nhanh_api(
+            "https://dev.nhanh.vn/api/order/add",
+            "HerSkincare",
+            "Vw46erydhs_Cw6e7r6uhdsgas_43w5yr",
+            $order_data
+        );
+        
+        return $response;
+    }
+    
+    /*
+    function push_order_to_nhanh($order_data)
+    {
+        $response = call_nhanh_api(
+            $api_domain_url . "/api/order/add",
+            $api_username,
+            $api_secret,
+            $order_data
+        );
+        
+        return $response;
+    }*/
 }
 ?>
