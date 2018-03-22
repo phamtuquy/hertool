@@ -50,7 +50,7 @@ class Shopee extends CI_Controller {
 	            if ($response['code'] == 1)
 	            {
 	            	$shopee_order = json_decode($datastring);
-	            	$shopee_order_id = (int)$shopee_order->id;
+	            	$shopee_order_id = (int)str_replace("Sh", "", $shopee_order->id);
 	            	$new_order_id = (int)reset($response['data']);
 	            	
 	            	$this->shopeemodel->store_pushed_order($shopee_order_id, $new_order_id);

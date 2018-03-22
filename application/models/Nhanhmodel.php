@@ -87,7 +87,7 @@ class NhanhModel extends CI_Model {
     function push_order_to_nhanh($order_data)
     {
         $response = call_nhanh_api(
-            "prod",
+            "dev",
             "/api/order/add",
             $order_data
         );
