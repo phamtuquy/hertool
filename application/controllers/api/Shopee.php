@@ -10,24 +10,76 @@ class Shopee extends CI_Controller {
 	
 	public function querystock($id, $sku)
 	{
+		if ($sku == "H0")
+		{
+			json_output(200, array(
+		            (object)array(
+		                'shopeeproductid' => $id,
+		                'sku' => $sku,
+		                'nhanhproductid' => 0,
+		                'nhanhstocknumber' => -30
+		            ),
+		        ));
+		    return;
+		}
 		$this->load->model('shopeemodel');
 		$this->load->model('nhanhmodel');
 
         //$nhanh_product_id = $this->shopeemodel->map_nhanh_id($id);
-        $nhanh_product_id = $this->shopeemodel->map_nhanh_id_mysql($id, $sku);
-        $stock_status = $this->nhanhmodel->query_stock($nhanh_product_id);
+        //$nhanh_product_id = $this->shopeemodel->map_nhanh_id_mysql($id, $sku);
+        //$stock_status = $this->nhanhmodel->query_stock($nhanh_product_id);
         
-        $data = array(
-            (object)array(
-                'shopeeproductid' => $id,
-                'sku' => $sku,
-                'nhanhproductid' => $nhanh_product_id,
-                'nhanhstocknumber' => $stock_status
-            ),
-        );
+        $data = $this->nhanhmodel->query_stock_by_code($sku);
+        $data[0]->shopeeproductid = $id;
         
-        //json_output(200, $json_string);
         json_output(200, $data);
+	}
+	
+	public function pushnhanhorder()
+	{
+	    try {
+	        //json_output(200, $this->input->post());
+            $datastring = json_encode($this->input->post());
+            
+            $this->load->model('nhanhmodel');
+            $this->load->model('shopeemodel');
+            
+            $response = $this -> nhanhmodel -> push_order_to_nhanh($datastring);
+            
+            try{
+	            if ($response['code'] == 1)
+	            {
+	            	$shopee_order = json_decode($datastring);
+	            	$shopee_order_id = (int)$shopee_order->id;
+	            	$new_order_id = (int)reset($response['data']);
+	            	
+	            	$this->shopeemodel->store_pushed_order($shopee_order_id, $new_order_id);
+	            }
+	            
+	            $object = array(
+	            	(object)array(
+	            		'code' => (int)$response['code'],
+	            		'result' => $response,
+	            		'shopee_order' => $shopee_order_id,
+	            		'nhanh_order' => $new_order_id
+	            	)
+	            );
+            }
+            catch(Exception $e)
+            {
+            	$object = array(
+	            	(object)array(
+	            		'code' => 0,
+	            		'message' => $e.getMessage()
+	            	)
+	            );
+            }
+            
+            json_output(200, $object);
+        }
+        catch(Exception $e) {
+            json_output(200, $e->getMessage());
+        }
 	}
 	
 	public function checkpushed($order_id)

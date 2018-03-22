@@ -8,79 +8,76 @@ class NhanhModel extends CI_Model {
         parent::__construct();
     }
     
-    private static $api_username = "HerSkincare";
+    /*private static $api_username = "HerSkincare";
     private static $api_secret = "Vw46erydhs_Cw6e7r6uhdsgas_43w5yr";
-    private static $api_domain_url = "https://dev.nhanh.vn";
+    private static $api_domain_url = "https://dev.nhanh.vn";*/
     
     function query_stock($product_id)
     {
-        $apiUsername = "HerSkincare";
-        $secretKey = "Mew5e6ry_qqw46r7tyjhdsefXzsfseMx";
-        
-        $dataString = $product_id . "";
-        $checksum = md5(md5($secretKey . $dataString) . $dataString);
-    
-        $postArray = array(
-            "version" => "1.0",
-            "apiUsername" => $apiUsername,
-            "data" => $dataString,
-            "checksum" => $checksum
+        $data_string = $product_id . "";
+        $response = call_nhanh_api(
+            "prod",
+            "/api/product/detail",
+            $data_string
         );
-    
-        $curl = curl_init("https://graph.nhanh.vn/api/product/detail");
-        curl_setopt($curl, CURLOPT_POST, 1);
-        curl_setopt($curl, CURLOPT_POSTFIELDS, $postArray);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-    
-        $curlResult = curl_exec($curl);
-    
-        if(! curl_error($curl)) {
-            // success
-            $response = json_decode($curlResult, true);
-        } else {
-            // failed, cannot connect nhanh.vn
-            $response = new stdClass();
-            $response->code = 0;
-            $response->messages = array(curl_error($curl));
-        }
-        curl_close($curl);
-    
+        
         if ($response['code'] == 1) {
             //return $response->data->$dataString->inventory->remain; //doesn't work on Codeigniter 3.x
             return reset($response['data'])['inventory']['remain']; //Work on Codeigniter 3.x
         } else {
             // failed, show error messages
             return -30;
-            if(isset($response->messages) && is_array($response->messages)) {
-                foreach($response->messages as $message) {
-                    echo $message;
-                }
-            }
         }
+    }
+    
+    function query_stock_by_code($code)
+    {
+        $response = $this->search_product_by_code($code);
+        
+        if ($response['code'] == 1) {
+            //return $response->data->$dataString->inventory->remain; //doesn't work on Codeigniter 3.x
+            $stock_remain = reset($response['data']['products'])['inventory']['remain']; //Work on Codeigniter 3.x
+            $nhanh_product_id = reset($response['data']['products'])['idNhanh'];
+        } else {
+            // failed, show error messages
+            $stock_remain = -30;
+            $nhanh_product_id = 0;
+        }
+        
+        $data = array(
+            (object)array(
+                'shopeeproductid' => 0,
+                'sku' => $code,
+                'nhanhproductid' => $nhanh_product_id,
+                'nhanhstocknumber' => $stock_remain
+            ),
+        );
+        
+        return $data;
     }
     
     function get_order_history($order_id)
     {
         $data_string = "" . $order_id;
         $response = call_nhanh_api(
+            "dev",
             "https://dev.nhanh.vn/api/order/history",
-            "HerSkincare",
-            "Vw46erydhs_Cw6e7r6uhdsgas_43w5yr",
             $data_string
         );
         
         return $response;
     }
     
-    function get_order($mobile, $city, $district)
+    function get_order($id)
     {
-        $data_string = array(
-            customerMobile => $mobile
+        $data_array = array(
+            'id' => $id
         );
+        $data_string = json_encode($data_array);
+        
         $response = call_nhanh_api(
-            "https://dev.nhanh.vn/api/order/history",
-            "HerSkincare",
-            "Vw46erydhs_Cw6e7r6uhdsgas_43w5yr",
+            "dev",
+            "/api/order/index",
             $data_string
         );
         
@@ -90,10 +87,26 @@ class NhanhModel extends CI_Model {
     function push_order_to_nhanh($order_data)
     {
         $response = call_nhanh_api(
-            "https://dev.nhanh.vn/api/order/add",
-            "HerSkincare",
-            "Vw46erydhs_Cw6e7r6uhdsgas_43w5yr",
+            "prod",
+            "/api/order/add",
             $order_data
+        );
+        
+        return $response;
+    }
+    
+    function search_product_by_code($code)
+    {
+        $data_array = array(
+            'name' => $code
+        );
+        
+        $data_string = json_encode($data_array);
+    
+        $response = call_nhanh_api(
+            "prod",
+            "/api/product/search",
+            $data_string
         );
         
         return $response;

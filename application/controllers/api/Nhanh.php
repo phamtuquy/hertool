@@ -17,30 +17,23 @@ class Nhanh extends CI_Controller {
 	    json_output(200, $response);
 	}
 	
-	public function getorder($mobile, $city, $district)
+	public function getorder($id)
 	{
 	    $this->load->model('nhanhmodel');
 	    
-	    $response = $this -> nhanhmodel -> get_order($mobile, $city, $district);
+	    $response = $this -> nhanhmodel -> get_order($id);
 	    
 	    json_output(200, $response);
 	}
 	
-	public function pushnhanhorder()
+	
+	
+	public function searchproductbycode($code)
 	{
-	    try {
-	        //json_output(200, $this->input->post());
-            $datastring = json_encode($this->input->post());
+		$this->load->model('nhanhmodel');
             
-            $this->load->model('nhanhmodel');
-            
-            $response = $this -> nhanhmodel -> push_order_to_nhanh($datastring);
-            
-            json_output(200, $response);
-        }
-        catch(Exception $e) {
-            json_output(200, $e->getMessage());
-        }
-	    
+        $response = $this -> nhanhmodel -> search_product_by_code($code);
+        
+        json_output(200, $response);
 	}
 }

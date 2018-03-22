@@ -50,5 +50,16 @@ class ShopeeModel extends CI_Model {
         else
             return 0;
     }
+    
+    function store_pushed_order($shopee_order_id, $nhanh_order_id)
+    {
+        $data = array(
+            'shopee_order_id' => $shopee_order_id,
+            'nhanh_order_id' => $nhanh_order_id,
+            'shopee_order_serialnumber' => ''
+        );
+        
+        $this->db->insert('shopee_nhanh_order', $data);
+    }
 }
 ?>

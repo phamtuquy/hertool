@@ -54,12 +54,14 @@ $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
 
 $route['api/v1/shopee/querystock/(:num)/(:any)'] = 'api/shopee/querystock/$1/$2';
-$route['api/v1/shopee/checkpushed/(:num)'] = 'api/shopee/checkpushed/$1';
+$route['api/v1/shopee/checkpushed/(:any)'] = 'api/shopee/checkpushed/$1';
 $route['api/v1/shopee/putproductstring'] = 'api/shopee/putproductstring/';
 $route['api/v1/shopee/storepushedorder'] = 'api/shopee/storepushedorder/';
 
+$route['api/v1/shopee/pushnhanhorder'] = 'api/shopee/pushnhanhorder/';
+
 $route['api/v1/nhanh/getorderhistory/(:num)'] = 'api/nhanh/getorderhistory/$1';
-$route['api/v1/nhanh/pushnhanhorder'] = 'api/nhanh/pushnhanhorder/';
-$route['api/v1/nhanh/getorder/(:any)/(:any)/(:any)'] = 'api/nhanh/getorder/$1/$2/$3';
+$route['api/v1/nhanh/getorder/(:any)'] = 'api/nhanh/getorder/$1';
+$route['api/v1/nhanh/searchproductbycode/(:any)'] = 'api/nhanh/searchproductbycode/$1';
 
 $route['test'] = 'test';
